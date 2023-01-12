@@ -12,28 +12,32 @@ import firestore from "@react-native-firebase/firestore";
 import { HowToPlayModal, JoinGameModal, StartGameModal } from "../../modals";
 import { buttonStyle } from "../../styles/buttons";
 import { useRoute } from "@react-navigation/native";
+import checkDigit from "../../helpers/checkDigit";
 
 const HomeModals = ({
   navigation,
   onClose,
   onBegin,
   onDigitChange,
+  digit,
   openGames,
   startModalVisible,
   joinModalVisible,
-  htpModalVisible,
+  helpModalVisible,
 }: {
   navigation: any;
   onClose: () => void;
   onBegin: () => void;
   onDigitChange: (value: string) => void;
+  digit: string;
   openGames: any[];
   startModalVisible: boolean;
   joinModalVisible: boolean;
-  htpModalVisible: boolean;
+  helpModalVisible: boolean;
 }) => (
   <>
     <StartGameModal
+      digit={digit}
       onDigitChange={onDigitChange}
       onBegin={onBegin}
       visible={startModalVisible}
@@ -45,14 +49,14 @@ const HomeModals = ({
       visible={joinModalVisible}
       onClose={onClose}
     />
-    <HowToPlayModal visible={htpModalVisible} onClose={onClose} />
+    <HowToPlayModal visible={helpModalVisible} onClose={onClose} />
   </>
 );
 
 const Home = ({ navigation }: any) => {
   const [digit, setDigit] = useState("");
   const [modalOpened, setModalOpened] = useState<
-    "start" | "join" | "htp" | null
+    "start" | "join" | "help" | null
   >(null);
   const [openGames, setOpenGames] = useState<any[]>([]);
 
@@ -114,17 +118,24 @@ const Home = ({ navigation }: any) => {
       .catch((error) => console.error("Error adding Tutorial: ", error));
   };
 
+  const onDigitChange = (newDigit: string) => {
+    checkDigit(newDigit, digit, () => {
+      setDigit(newDigit);
+    });
+  };
+
   return (
     <View style={styles.centeredView}>
       <HomeModals
         navigation={navigation}
         onClose={() => setModalOpened(null)}
         onBegin={startGame}
-        onDigitChange={setDigit}
+        digit={digit}
+        onDigitChange={onDigitChange}
         openGames={openGames}
         startModalVisible={modalOpened === "start"}
         joinModalVisible={modalOpened === "join"}
-        htpModalVisible={modalOpened === "htp"}
+        helpModalVisible={modalOpened === "help"}
       />
       <View style={styles.menu}>
         <ImageBackground
@@ -166,7 +177,7 @@ const Home = ({ navigation }: any) => {
           <View>
             <TouchableOpacity
               style={[styles.ruleButton]}
-              onPress={() => setModalOpened("htp")}
+              onPress={() => setModalOpened("help")}
             >
               <Image
                 style={{

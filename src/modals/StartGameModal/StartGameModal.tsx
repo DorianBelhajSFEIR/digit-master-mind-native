@@ -5,22 +5,16 @@ import { buttonStyle } from "../../styles/buttons";
 import { textStyle } from "../../styles/text";
 
 const StartGameModal = ({
-  onDigitChange,
+  digit,
   onBegin,
   visible,
   onClose,
-}: ModalProps) => {
-  const [value, setValue] = useState<string>("");
-  const isDisabled = value.length < 4;
-
-  const onChange = (value: string) => {
-    setValue(value);
-    onDigitChange && onDigitChange(value);
-  };
+  onDigitChange,
+}: ModalProps & { digit: string; onDigitChange: (value: string) => void }) => {
+  const isDisabled = digit.length < 4;
 
   const onModalClose = () => {
-    setValue("");
-    onDigitChange && onDigitChange("");
+    onDigitChange("");
     onClose();
   };
 
@@ -29,7 +23,7 @@ const StartGameModal = ({
       <Text style={textStyle.modalTitle}>
         Allez hop ! Donnez-nous votre numéro secret !
       </Text>
-      <DigitInput onDigitChange={onChange} />
+      <DigitInput digit={digit} onDigitChange={onDigitChange} />
       <View style={{ marginVertical: 20 }}>
         <Text style={textStyle.h6}>
           1. Choisissez un nombre à quatres chiffres.
