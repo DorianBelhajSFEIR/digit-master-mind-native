@@ -23,7 +23,6 @@ const GameScreen = ({ route, navigation }: any) => {
   const { play } = usePlay();
 
   const [finished, setFinished] = useState<boolean>(false);
-  const [timeleft, setTimeleft] = useState<number>(10);
   const [turn, setTurn] = useState<string>("");
   const [attempt, setAttempt] = useState<string>("");
   const [chosenNumber, setChosenNumber] = useState<string>("");
@@ -40,40 +39,12 @@ const GameScreen = ({ route, navigation }: any) => {
 
   const isDisabled = attempt.length !== 4 || finished || notYourTurn;
 
-  const handleStart = () => {
-    let count = 10;
-
-    const timer = setInterval(() => {
-      if (turn === (mode === "join" ? "a" : "b")) {
-        count = 0;
-        return;
-      }
-      const newCount = count - 1;
-      setTimeleft(newCount >= 0 ? newCount : 0);
-      count = newCount >= 0 ? newCount : 0;
-      console.log("tt ", count);
-      if (count === 0) {
-        games.doc(id).update({ turn: mode === "join" ? "a" : "b" });
-        clearInterval(timer);
-      }
-    }, 1000);
-  };
-
-  useEffect(() => {
-    const timer = setTimeout(() => {}, 10000);
-
-    return () => clearTimeout(timer);
-  });
-
   useEffect(() => {
     console.log("turn => ", turn);
 
     if (turn === (mode === "join" ? "b" : "a")) {
-      setTimeleft(10);
-      handleStart();
     } else {
       console.log("clear");
-      // clearInterval(timer);
     }
   }, [turn]);
 
@@ -117,9 +88,6 @@ const GameScreen = ({ route, navigation }: any) => {
   };
 
   const handleAttempt = () => {
-    // clearInterval(timer);
-    setTimeleft(0);
-
     if (mode === "join") {
       games
         .doc(id)
@@ -155,7 +123,6 @@ const GameScreen = ({ route, navigation }: any) => {
         })
         .then(() => {
           setAttempt("");
-          setTimeleft(10);
         });
     }
   };
@@ -237,11 +204,6 @@ const GameScreen = ({ route, navigation }: any) => {
               </View>
             ) : (
               <View>
-                {yourTurn && (
-                  <Text style={styles.text}>
-                    Il te reste {timeleft} seconde{timeleft > 1 && "s"}.
-                  </Text>
-                )}
                 <View style={{ marginTop: 20, marginBottom: 20 }}>
                   <Text style={[styles.subtitle, { marginBottom: 20 }]}>
                     Devinez le numéro de votre adversaire !
