@@ -23,7 +23,6 @@ const GameScreen = ({ route, navigation }: any) => {
   const { play } = usePlay();
 
   const [finished, setFinished] = useState<boolean>(false);
-  const [disabled, setDisabled] = useState<boolean>(true);
   const [timeleft, setTimeleft] = useState<number>(10);
   const [turn, setTurn] = useState<string>("");
   const [attempt, setAttempt] = useState<string>("");
@@ -56,15 +55,12 @@ const GameScreen = ({ route, navigation }: any) => {
       if (count === 0) {
         games.doc(id).update({ turn: mode === "join" ? "a" : "b" });
         clearInterval(timer);
-        setDisabled(true);
       }
     }, 1000);
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDisabled(true);
-    }, 10000);
+    const timer = setTimeout(() => {}, 10000);
 
     return () => clearTimeout(timer);
   });
@@ -74,7 +70,6 @@ const GameScreen = ({ route, navigation }: any) => {
 
     if (turn === (mode === "join" ? "b" : "a")) {
       setTimeleft(10);
-      setDisabled(false);
       handleStart();
     } else {
       console.log("clear");
@@ -122,8 +117,6 @@ const GameScreen = ({ route, navigation }: any) => {
   };
 
   const handleAttempt = () => {
-    setDisabled(true);
-
     // clearInterval(timer);
     setTimeleft(0);
 
@@ -163,7 +156,6 @@ const GameScreen = ({ route, navigation }: any) => {
         .then(() => {
           setAttempt("");
           setTimeleft(10);
-          setDisabled(false);
         });
     }
   };
@@ -250,7 +242,7 @@ const GameScreen = ({ route, navigation }: any) => {
                     Il te reste {timeleft} seconde{timeleft > 1 && "s"}.
                   </Text>
                 )}
-                <View style={{ marginBottom: 20 }}>
+                <View style={{ marginTop: 20, marginBottom: 20 }}>
                   <Text style={[styles.subtitle, { marginBottom: 20 }]}>
                     Devinez le numéro de votre adversaire !
                   </Text>
@@ -330,6 +322,5 @@ const styles = StyleSheet.create({
     fontFamily: "AutourOne-Regular",
     textAlign: "center",
     color: "white",
-    marginBottom: 20,
   },
 });
